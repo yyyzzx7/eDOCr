@@ -212,7 +212,7 @@ def analyse_pred(pred,cnts):
         add=False
     return pred_dict, add
 ######################################################################
-def detect_the_patches(img,pipeline,patches_x=5,patches_y=4,ol=0.05):
+def detect_the_patches(img,pipeline,patches_x=5,patches_y=4,ol=0.05,cluster_t=20):
     a_x=(1-ol)/(patches_x)
     b_x=a_x+ol
     a_y=(1-ol)/(patches_y)
@@ -231,12 +231,12 @@ def detect_the_patches(img,pipeline,patches_x=5,patches_y=4,ol=0.05):
                     xy=xy+offset
                     pts.append(xy)
                 box_groups.append(pts)
-    box_groups=agglomerative_cluster(box_groups, threshold_distance=20.0)
+    box_groups=agglomerative_cluster(box_groups, threshold_distance=cluster_t)
     new_group=[box for box in box_groups]
     snippets=pipeline.recognize_dimensions(np.int32(new_group),np.array(img))
     return snippets
 
-def read_dimensions(img,alphabet=None,weight_path=None):
+def read_dimensions(img,alphabet=None,weight_path=None,cluster_t=20):
     if alphabet and weight_path: 
         recognizer =recognition.Recognizer(alphabet=alphabet)
         recognizer.model.load_weights(weight_path)
@@ -244,5 +244,5 @@ def read_dimensions(img,alphabet=None,weight_path=None):
         recognizer =recognition.Recognizer()
     pipeline=Pipeline(recognizer=recognizer)
     img=Image.open(img)
-    snippets=detect_the_patches(img,pipeline)
+    snippets=detect_the_patches(img,pipeline,cluster_t=cluster_t)
     return snippets

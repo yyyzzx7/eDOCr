@@ -14,7 +14,7 @@ parser=argparse.ArgumentParser(description='Pre-process the engineering drawing,
 parser.add_argument('file_path', help='specify the file path to the drawing. Supported formats: .pdf, .png, .jpg')
 parser.add_argument('--dest_folder', help='specify the destination folder')
 parser.add_argument('--water', action='store_true', help='Does the drawing have watermark you want to remove?')                  
-
+parser.add_argument('--cluster', help='Set a custom threshold distance (in px.) for grouping detections')   
 args = parser.parse_args()
 
 if os.path.exists(args.file_path):
@@ -31,6 +31,10 @@ if args.dest_folder:
 else:
     os.makedirs('Results')
     dest_DIR='Results'
+if int(args.cluster):
+    cluster_t=int(args.cluster)
+else:
+    cluster_t=20
 ###############################################################
 GDT_symbols='⏤⏥○⌭⌒⌓⏊∠⫽⌯⌖◎↗⌰'
 FCF_symbols='ⒺⒻⓁⓂⓅⓈⓉⓊ'
@@ -71,7 +75,7 @@ for img in images:
     
     process_img=os.path.join(dest_DIR, filename+'_'+str(index)+'_process.jpg')
 
-    dimension_dict=tools.pipeline_dimensions.read_dimensions(process_img,alphabet_dimensions,model_dimensions)
+    dimension_dict=tools.pipeline_dimensions.read_dimensions(process_img,alphabet_dimensions,model_dimensions,cluster_t)
     mask_img=tools.output.mask_the_drawing(img, infoblock_dict, gdt_dict, dimension_dict,cl_frame,color_palette)
 
     #Record the results

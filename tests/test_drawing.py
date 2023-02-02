@@ -23,7 +23,7 @@ alphabet_gdts=string.digits+',.⌀ABCD'+GDT_symbols #+FCF_symbols
 model_gdts='eDOCr/keras_ocr_models/models/recognizer_gdts.h5'
 
 color_palette={'infoblock':(180,220,250),'gdts':(94,204,243),'dimensions':(93,206,175),'frame':(167,234,82),'flag':(241,65,36)}
-
+cluster_t=20
 
 class_list, img_boxes=tools.box_tree.findrect(img)
 boxes_infoblock,gdt_boxes,cl_frame,process_img=tools.img_process.process_rect(class_list,img)
@@ -34,7 +34,7 @@ gdt_dict=tools.pipeline_gdts.read_gdtbox1(gdt_boxes,alphabet_gdts,model_gdts,alp
  
 process_img=os.path.join(dest_DIR, filename+'_process.jpg')
 
-dimension_dict=tools.pipeline_dimensions.read_dimensions(process_img,alphabet_dimensions,model_dimensions)
+dimension_dict=tools.pipeline_dimensions.read_dimensions(process_img,alphabet_dimensions,model_dimensions,cluster_t)
 mask_img=tools.output.mask_the_drawing(img, infoblock_dict, gdt_dict, dimension_dict,cl_frame,color_palette)
 
 #Record the results
