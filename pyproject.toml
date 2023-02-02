@@ -23,3 +23,6 @@ dependencies = {file = ["requirements.txt"]}
 [project.urls]
 "Homepage" = "https://github.com/javvi51/eDOCr"
 "Bug Tracker" = "https://github.com/javvi51/eDOCr/issues"
+
+[tool.setuptools.package-data]
+mypkg = ["*.h5"]

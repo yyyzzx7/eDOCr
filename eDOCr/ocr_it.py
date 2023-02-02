@@ -31,7 +31,7 @@ if args.dest_folder:
 else:
     os.makedirs('Results')
     dest_DIR='Results'
-if int(args.cluster):
+if args.cluster:
     cluster_t=int(args.cluster)
 else:
     cluster_t=20
@@ -40,12 +40,13 @@ GDT_symbols='⏤⏥○⌭⌒⌓⏊∠⫽⌯⌖◎↗⌰'
 FCF_symbols='ⒺⒻⓁⓂⓅⓈⓉⓊ'
 Extra='(),.+-±:/°"⌀'
 
+PACKAGE_DIR = os.path.dirname(__file__)
 alphabet_dimensions=string.digits + 'AaBCDRGHhMmnx'+ Extra
-model_dimensions='eDOCr/keras_ocr_models/models/recognizer_dimensions.h5'
+model_dimensions=f'{PACKAGE_DIR}/keras_ocr_models/models/recognizer_dimensions.h5'
 alphabet_infoblock=string.digits+string.ascii_letters+',.:-/'
-model_infoblock='eDOCr/keras_ocr_models/models/recognizer_infoblock.h5'
+model_infoblock=f'{PACKAGE_DIR}/keras_ocr_models/models/recognizer_infoblock.h5'
 alphabet_gdts=string.digits+',.⌀ABCD'+GDT_symbols #+FCF_symbols
-model_gdts='eDOCr/keras_ocr_models/models/recognizer_gdts.h5'
+model_gdts=f'{PACKAGE_DIR}/keras_ocr_models/models/recognizer_gdts.h5'
 
 color_palette={'infoblock':(180,220,250),'gdts':(94,204,243),'dimensions':(93,206,175),'frame':(167,234,82),'flag':(241,65,36)}
 filename=os.path.splitext(os.path.basename(args.file_path))[0]
