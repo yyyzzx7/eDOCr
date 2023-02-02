@@ -24,5 +24,8 @@ dependencies = {file = ["requirements.txt"]}
 "Homepage" = "https://github.com/javvi51/eDOCr"
 "Bug Tracker" = "https://github.com/javvi51/eDOCr/issues"
 
+[tool.setuptools.packages.find]
+where = ["eDOCr\keras_ocr_models\models"]
+
 [tool.setuptools.package-data]
 mypkg = ["*.h5"]
