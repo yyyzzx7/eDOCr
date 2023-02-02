@@ -1,6 +1,7 @@
 LICENSE
 README.md
 pyproject.toml
+requirements.txt
 eDOCr/ocr_it.py
 eDOCr.egg-info/PKG-INFO
 eDOCr.egg-info/SOURCES.txt
@@ -26,4 +27,5 @@ eDOCr/tools/output.py
 eDOCr/tools/pipeline_dimensions.py
 eDOCr/tools/pipeline_gdts.py
 eDOCr/tools/pipeline_infoblock.py
+eDOCr/tools/tolerances.py
 eDOCr/tools/watermark.py
