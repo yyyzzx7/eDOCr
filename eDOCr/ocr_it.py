@@ -2,6 +2,7 @@ import os
 import argparse
 from pdf2image import convert_from_path
 import numpy as np
+import keras_ocr
 from eDOCr import tools
 import cv2
 import string
@@ -29,7 +30,7 @@ if args.dest_folder:
     else:
         raise NotADirectoryError (args.dest_folder)
 else:
-    os.makedirs('Results')
+    os.makedirs('Results', exist_ok=True)
     dest_DIR='Results'
 if args.cluster:
     cluster_t=int(args.cluster)
@@ -40,13 +41,28 @@ GDT_symbols='⏤⏥○⌭⌒⌓⏊∠⫽⌯⌖◎↗⌰'
 FCF_symbols='ⒺⒻⓁⓂⓅⓈⓉⓊ'
 Extra='(),.+-±:/°"⌀'
 
-PACKAGE_DIR = os.path.dirname(__file__)
 alphabet_dimensions=string.digits + 'AaBCDRGHhMmnx'+ Extra
-model_dimensions=f'{PACKAGE_DIR}/keras_ocr_models/models/recognizer_dimensions.h5'
 alphabet_infoblock=string.digits+string.ascii_letters+',.:-/'
-model_infoblock=f'{PACKAGE_DIR}/keras_ocr_models/models/recognizer_infoblock.h5'
 alphabet_gdts=string.digits+',.⌀ABCD'+GDT_symbols #+FCF_symbols
-model_gdts=f'{PACKAGE_DIR}/keras_ocr_models/models/recognizer_gdts.h5'
+
+
+model_infoblock=keras_ocr.tools.download_and_verify(
+                        url="https://github.com/javvi51/eDOCr/releases/download/v1.0.0/recognizer_infoblock.h5",
+                        filename="recognizer_infoblock.h5",
+                        sha256="e0a317e07ce75235f67460713cf1b559e02ae2282303eec4a1f76ef211fcb8e8",
+                    )
+
+model_dimensions=keras_ocr.tools.download_and_verify(
+                        url="https://github.com/javvi51/eDOCr/releases/download/v1.0.0/recognizer_dimensions.h5",
+                        filename="recognizer_dimensions.h5",
+                        sha256="a1c27296b1757234a90780ccc831762638b9e66faf69171f5520817130e05b8f",
+                    )
+
+model_gdts=keras_ocr.tools.download_and_verify(
+                        url="https://github.com/javvi51/eDOCr/releases/download/v1.0.0/recognizer_gdts.h5",
+                        filename="recognizer_gdts.h5",
+                        sha256="58acf6292a43ff90a344111729fc70cf35f0c3ca4dfd622016456c0b29ef2a46",
+                    )
 
 color_palette={'infoblock':(180,220,250),'gdts':(94,204,243),'dimensions':(93,206,175),'frame':(167,234,82),'flag':(241,65,36)}
 filename=os.path.splitext(os.path.basename(args.file_path))[0]
@@ -58,7 +74,6 @@ else:
     images=[cv2.imread(args.file_path)]
 
 index = 0
-color_palette={'infoblock':(87,115,153),'gdts':(73,88,103),'dimensions':(189,213,234),'frame':(247,247,255),'flag':(254,95,85)}
 #for pages in pdf, usually 1
 for img in images:
     index += 1

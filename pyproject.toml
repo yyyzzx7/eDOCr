@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "eDOCr"
-version = "0.0.1"
+version = "0.0.4"
 authors = [
   { name="Javier Villena Toro" },
 ]
@@ -25,10 +25,4 @@ dependencies = {file = ["requirements.txt"]}
 "Bug Tracker" = "https://github.com/javvi51/eDOCr/issues"
 
 [tool.setuptools]
-include-package-data = true
-
-[tool.setuptools.packages.find]
-where = ["eDOCr/keras_ocr_models/models"]
-
-[tool.setuptools.package-data]
-mypkg = ["*.h5"]
+include-package-data = false

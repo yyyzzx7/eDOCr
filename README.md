@@ -1,109 +1,145 @@
-# keras-ocr [![Documentation Status](https://readthedocs.org/projects/keras-ocr/badge/?version=latest)](https://keras-ocr.readthedocs.io/en/latest/?badge=latest)
+# eDOCr
 
-This is a slightly polished and packaged version of the [Keras CRNN implementation](https://github.com/kurapan/CRNN) and the published [CRAFT text detection model](https://github.com/clovaai/CRAFT-pytorch). It provides a high level API for training a text detection and OCR pipeline.
-
-Please see [the documentation](https://keras-ocr.readthedocs.io/) for more examples, including for training a custom model.
+eDOCr is a packaged version of [keras-ocr](https://github.com/faustomorales/keras-ocr) that facilitates end-to-end digitization of mechanical EDs. Developed for Windows OS and using Python as the primary programming language.
 
 ## Getting Started
 
 ### Installation
 
-`keras-ocr` supports Python >= 3.6 and TensorFlow >= 2.0.0.
+`eDOCr` supports Python >= 3.6 and TensorFlow >= 2.0.0.
+Install your prefered distribution platform, [Anaconda](https://www.anaconda.com/products/distribution) is recommended.
+Open Anaconda Prompt and type the following commands:
+
 
 ```bash
-# To install from master
-pip install git+https://github.com/faustomorales/keras-ocr.git#egg=keras-ocr
+conda create -n edocr -ypip
+conda activate edocr
 
 # To install from PyPi
-pip install keras-ocr
+conda install pip
+pip install eDOCr
+
+# To install from Source
+cd path/to/your/folder
+git clone https://github.com/javvi51/eDOCr
+cd eDOCr
+pip install -r requirements.txt
 ```
 
-### Using
+### Using 
 
-The package ships with an easy-to-use implementation of the CRAFT text detection model from [this repository](https://github.com/clovaai/CRAFT-pytorch) and the CRNN recognition model from [this repository](https://github.com/kurapan/CRNN).
+There are two ways of using eDOCr: from terminal and from your own python file.
 
-```python
-import matplotlib.pyplot as plt
+#### From Terminal:
 
-import keras_ocr
-
-# keras-ocr will automatically download pretrained
-# weights for the detector and recognizer.
-pipeline = keras_ocr.pipeline.Pipeline()
-
-# Get a set of three example images
-images = [
-    keras_ocr.tools.read(url) for url in [
-        'https://upload.wikimedia.org/wikipedia/commons/b/bd/Army_Reserves_Recruitment_Banner_MOD_45156284.jpg',
-        'https://upload.wikimedia.org/wikipedia/commons/e/e8/FseeG2QeLXo.jpg',
-        'https://upload.wikimedia.org/wikipedia/commons/b/b4/EUBanana-500x112.jpg'
-    ]
-]
-
-# Each list of predictions in prediction_groups is a list of
-# (word, box) tuples.
-prediction_groups = pipeline.recognize(images)
-
-# Plot the predictions
-fig, axs = plt.subplots(nrows=len(images), figsize=(20, 20))
-for ax, image, predictions in zip(axs, images, prediction_groups):
-    keras_ocr.tools.drawAnnotations(image=image, predictions=predictions, ax=ax)
-```
-
-![example of labeled image](https://raw.githubusercontent.com/faustomorales/keras-ocr/master/docs/_static/readme_labeled.jpg)
-
-## Comparing keras-ocr and other OCR approaches
-
-You may be wondering how the models in this package compare to existing cloud OCR APIs. We provide some metrics below and [the notebook](https://drive.google.com/file/d/1FMS3aUZnBU4Tc6bosBPnrjdMoSrjZXRp/view?usp=sharing) used to compute them using the first 1,000 images in the COCO-Text validation set. We limited it to 1,000 because the Google Cloud free tier is for 1,000 calls a month at the time of this writing. As always, caveats apply:
-
-- No guarantees apply to these numbers -- please beware and compute your own metrics independently to verify them. As of this writing, they should be considered a very rough first draft. Please open an issue if you find a mistake. In particular, the cloud APIs have a variety of options that one can use to improve their performance and the responses can be parsed in different ways. It is possible that I made some error in configuration or parsing. Again, please open an issue if you find a mistake!
-- We ignore punctuation and letter case because the out-of-the-box recognizer in keras-ocr (provided by [this independent repository](https://github.com/kurapan/CRNN)) does not support either. Note that both AWS Rekognition and Google Cloud Vision support punctuation as well as upper and lowercase characters.
-- We ignore non-English text.
-- We ignore illegible text.
-
-| model                                                                                                                         | latency | precision | recall |
-| ----------------------------------------------------------------------------------------------------------------------------- | ------- | --------- | ------ |
-| [AWS](https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/aws_annotations.json)                               | 719ms   | 0.45      | 0.48   |
-| [GCP](https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/google_annotations.json)                            | 388ms   | 0.53      | 0.58   |
-| [keras-ocr](https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/keras_ocr_annotations_scale_2.json) (scale=2) | 417ms   | 0.53      | 0.54   |
-| [keras-ocr](https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/keras_ocr_annotations_scale_3.json) (scale=3) | 699ms   | 0.5       | 0.59   |
-
-- Precision and recall were computed based on an intersection over union of 50% or higher and a text similarity to ground truth of 50% or higher.
-- `keras-ocr` latency values were computed using a Tesla P4 GPU on Google Colab. `scale` refers to the argument provided to `keras_ocr.pipelines.Pipeline()` which determines the upscaling applied to the image prior to inference.
-- Latency for the cloud providers was measured with sequential requests, so you can obtain significant speed improvements by making multiple simultaneous API requests.
-- Each of the entries provides a link to the JSON file containing the annotations made on each pass. You can use this with the notebook to compute metrics without having to make the API calls yourself (though you are encoraged to replicate it independently)!
-
-_Why not compare to Tesseract?_ In every configuration I tried, Tesseract did very poorly on this test. Tesseract performs best on scans of books, not on incidental scene text like that in this dataset.
-
-## Advanced Configuration
-By default if a GPU is available Tensorflow tries to grab almost all of the available video memory, and this sucks if you're running multiple models with Tensorflow and Pytorch. Setting any value for the environment variable `MEMORY_GROWTH` will force Tensorflow to dynamically allocate only as much GPU memory as is needed.
-
-You can also specify a limit per Tensorflow process by setting the environment variable `MEMORY_ALLOCATED` to any float, and this value is a float ratio of VRAM to the total amount present.
-
-To apply these changes, call `keras_ocr.config.configure()` at the top of your file where you import `keras_ocr`.
-
-## Contributing
-
-To work on the project, start by doing the following. These instructions probably do not yet work for Windows but if a Windows user has some ideas for how to fix that it would be greatly appreciated (I don't have a Windows machine to test on at the moment).
+We need to locate the ocr_it.py file in our system. If you have installed using pip, it will probably come in ```C:\Users\YOUR_USER\.conda\envs\edocr\Lib\site-packages\eDOCr\ocr_it.py```. If you have installed from source, it will be at your selected folder. All you need to do is:
 
 ```bash
-# Install local dependencies for
-# code completion, etc.
-make init
+python PATH/TO/YOUR/FOLDER/eDOCr/ocr_it.py PATH/TO/YOUR/DRAWING/my_drawing.pdf
 
-# Build the Docker container to run
-# tests and such.
-make build
 ```
 
-- You can get a JupyterLab server running to experiment with using `make lab`.
-- To run checks before committing code, you can use `make format-check type-check lint-check test`.
-- To view the documentation, use `make docs`.
+Additional commands you can use are:
 
-To implement new features, please first file an issue proposing your change for discussion.
+```bash
+# Specify the destination path. By default, it is the same as your drawing.
+--dest-folder PATH/TO/YOUR/DESTINATION/FOLDER
+# Does the drawing have watermark you want to remove? By default, it is not considered.
+--water
+# Advance Setting: Set a custom threshold distance (in px.) for grouping detections. Default is 20px.
+--cluster 25
+```
 
-To report problems, please file an issue with sample code, expected results, actual results, and a complete traceback.
+#### From your own python file
 
-## Troubleshooting
+More customization is possible using your own python file, such as selecting a different model, alphabet or changing colors.
 
-- _This package is installing `opencv-python-headless` but I would prefer a different `opencv` flavor._ This is due to [aleju/imgaug#473](https://github.com/aleju/imgaug/issues/473). You can uninstall the unwanted OpenCV flavor after installing `keras-ocr`. We apologize for the inconvenience.
+```bash
+# Importing packages
+import os
+from eDOCr import tools
+import cv2
+import string
+from skimage import io
+
+# Loading image and destination file
+dest_DIR = 'tests/test_Results'
+file_path = 'tests/test_samples/Candle_holder.jpg'
+filename = os.path.splitext(os.path.basename(file_path))[0]
+img = cv2.imread(file_path)
+
+# Selecting alphabet and model (Note that alphabet and alphabet model need to match)
+GDT_symbols = '⏤⏥○⌭⌒⌓⏊∠⫽⌯⌖◎↗⌰'
+FCF_symbols = 'ⒺⒻⓁⓂⓅⓈⓉⓊ'
+Extra = '(),.+-±:/°"⌀'
+
+alphabet_dimensions = string.digits + 'AaBCDRGHhMmnx' + Extra
+model_dimensions = 'eDOCr/keras_ocr_models/models/recognizer_dimensions.h5'
+alphabet_infoblock = string.digits+string.ascii_letters+',.:-/'
+model_infoblock = 'eDOCr/keras_ocr_models/models/recognizer_infoblock.h5'
+alphabet_gdts = string.digits + ',.⌀ABCD' + GDT_symbols
+model_gdts = 'eDOCr/keras_ocr_models/models/recognizer_gdts.h5'
+
+# Selecting personalized color palette and cluster setting
+color_palette = {'infoblock': (180, 220, 250), 'gdts': (94, 204, 243), 'dimensions': (93, 206, 175), 'frame': (167, 234, 82), 'flag': (241, 65, 36)}
+cluster_t = 20
+
+# eDOCr functions
+class_list, img_boxes = tools.box_tree.findrect(img)
+boxes_infoblock, gdt_boxes, cl_frame, process_img = tools.img_process.process_rect(class_list, img)
+io.imsave(os.path.join(dest_DIR, filename + '_process.jpg'), process_img)
+
+infoblock_dict = tools.pipeline_infoblock.read_infoblocks(boxes_infoblock, img, alphabet_infoblock, model_infoblock)
+gdt_dict = tools.pipeline_gdts.read_gdtbox1(gdt_boxes, alphabet_gdts, model_gdts, alphabet_dimensions, model_dimensions)
+ 
+process_img = os.path.join(dest_DIR, filename + '_process.jpg')
+
+dimension_dict = tools.pipeline_dimensions.read_dimensions(process_img, alphabet_dimensions, model_dimensions, cluster_t)
+mask_img = tools.output.mask_the_drawing(img, infoblock_dict, gdt_dict, dimension_dict, cl_frame, color_palette)
+
+# Record the results
+io.imsave(os.path.join(dest_DIR, filename + '_boxes.jpg'), img_boxes)
+io.imsave(os.path.join(dest_DIR, filename + '_mask.jpg'), mask_img)
+tools.output.record_data(dest_DIR, filename, infoblock_dict, gdt_dict, dimension_dict)
+```
+![example of labeled image](https://github.com/javvi51/eDOCr/releases/download/v1.0.0/Candle_holder_mask.jpg)
+### Training a model on a custom alphabet
+Fonts are not loaded if installing from pip. To train new models, please install from source.
+
+To train a model in a custom alphabet, a python file is provided, so that the only steps needed are:
+
+
+```bash
+# Importing Packages
+import os
+import string
+from eDOCr import keras_ocr
+from eDOCr.keras_ocr_models import train_recognizer
+
+# Fixing paths and alphabet
+DIR = os.getcwd()
+recognizer_basepath = os.path.join(DIR, 'eDOCr/Keras_OCR_models/models')
+data_dir = './tests'
+alphabet = string.digits + 'AaBCDRGHhMmnx' + '().,+-±:/°"⌀'
+
+# Number of autogenerated samples
+samples = 10000
+
+# Load white backgrounds and fonts
+backgrounds = []
+for i in range(0, samples):
+    backgrounds.append(os.path.join('./eDOCr/Keras_OCR_models/backgrounds/0.jpg'))
+
+fonts = []
+for i in os.listdir(os.path.join(DIR, 'eDOCr/Keras_OCR_models/fonts')):
+    fonts.append(os.path.join('./eDOCr/Keras_OCR_models/fonts', i))
+
+# Choose a pretrained model if you like
+
+pretrained_model = None 
+#pretrained_model = os.path.join(recognizer_basepath,'recognizer_dimensions.h5')
+
+# Start Training 
+train_recognizer.generate_n_train(alphabet, backgrounds, fonts, recognizer_basepath=recognizer_basepath, pretrained_model=pretrained_model)
+```
+
