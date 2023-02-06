@@ -24,6 +24,8 @@ cd path/to/your/folder
 git clone https://github.com/javvi51/eDOCr
 cd eDOCr
 pip install -r requirements.txt
+cd ..
+pip install .
 ```
 
 ### Using 
