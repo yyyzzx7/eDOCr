@@ -12,7 +12,7 @@ Open Anaconda Prompt and type the following commands:
 
 
 ```bash
-conda create -n edocr -ypip
+conda create -n edocr -y
 conda activate edocr
 
 # To install from PyPi
@@ -42,7 +42,7 @@ python PATH/TO/YOUR/FOLDER/eDOCr/ocr_it.py PATH/TO/YOUR/DRAWING/my_drawing.pdf
 Additional commands you can use are:
 
 ```bash
-# Specify the destination path. By default, it is the same as your drawing.
+# Specify the destination path. By default, it is the path you are running your code from.
 --dest-folder PATH/TO/YOUR/DESTINATION/FOLDER
 # Does the drawing have watermark you want to remove? By default, it is not considered.
 --water
