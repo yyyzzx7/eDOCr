@@ -40,10 +40,10 @@ def get_frame(image,thres=0.7):
                             boxes.append(b)                    
         box=sorted(boxes, key=lambda x: x['size'], reverse=True)[0]
         crop_img=image[box['y']:box['y']+box['h'],box['x']:box['x']+box['w']]
-        cl_frame=rect('rect_frame',box['x'],box['y'],box['w'],box['h'],box['size'],crop_img,'fire')
+        cl_frame=rect('rect_frame',box['x'],box['y'],box['w'],box['h'],crop_img,'fire')
     else:
         crop_img=image[0:0+image.shape[0],0:0+image.shape[1]]
-        cl_frame=rect('rect_frame',0,0,image.shape[1],image.shape[0],image.shape[0]*image.shape[1],crop_img,'fire')
+        cl_frame=rect('rect_frame',0,0,image.shape[1],image.shape[0],crop_img,'fire')
     return cl_frame
 
 def touching_box(cl,cl_fire,thres=1.1):

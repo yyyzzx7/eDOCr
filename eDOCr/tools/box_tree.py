@@ -22,14 +22,13 @@ from shapely.geometry import box
 # |   |-> show_tree(rect_list) -> OPTIONAL, show the box tree structure           
 # |   |-> angle(pt0,pt1,pt2) -> get the angle of the lines conformed by pt0-pt1 and pt0-pt2
 class rect(NodeMixin):
-    def __init__(self, name, x, y ,w, h, size,crop_img,state, parent=None, children=None):
+    def __init__(self, name, x, y ,w, h, crop_img,state, parent=None, children=None):
         super(rect, self).__init__()
         self.name = name
         self.x = x
         self.y = y
         self.w = w
         self.h = h
-        self.size = size
         self.crop_img =crop_img
         self.state = state
         self.parent = parent
@@ -169,7 +168,7 @@ def findrect(img):
                 cv2.putText(img_boxes, 'rect_'+str(r), (x1, y1), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 127, 83), 2) #Add rectangle tag
                 img_boxes = cv2.drawContours(img_boxes, [cnt], -1, (255, 127, 83), 2) #Plot rectangle contourn in green
                 size=w*h
-                rect_list.append(['rect_'+str(r),x,y,w,h,size]) #Get a list of rectangles
+                rect_list.append(['rect_'+str(r),x,y,w,h]) #Get a list of rectangles
                 class_list.append(rect('rect_'+str(r),x,y,w,h,size,crop_img,'green')) #Get a list with the rect class
                 r=r+1
     
