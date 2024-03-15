@@ -6,7 +6,7 @@ from skimage import io
 from pdf2image import convert_from_path
 import numpy as np
 dest_DIR='tests/test_Results'
-file_path='tests/test_samples/4132864-.jpg'
+file_path='tests/test_samples/LIU0010.jpg'
 filename=os.path.splitext(os.path.basename(file_path))[0]
 img=cv2.imread(file_path)
 #img = convert_from_path(file_path)
