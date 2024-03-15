@@ -11,6 +11,23 @@ Classifier: Operating System :: OS Independent
 Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 License-File: LICENSE
+Requires-Dist: opencv-python
+Requires-Dist: tensorflow>=2.0.0
+Requires-Dist: Pillow
+Requires-Dist: shapely
+Requires-Dist: anytree
+Requires-Dist: scikit-image
+Requires-Dist: scikit-learn
+Requires-Dist: tqdm
+Requires-Dist: validators
+Requires-Dist: essential_generators
+Requires-Dist: imgaug
+Requires-Dist: fonttools
+Requires-Dist: editdistance
+Requires-Dist: pyclipper
+Requires-Dist: efficientnet==1.0.0
+Requires-Dist: pytest
+Requires-Dist: pdf2image
 
 # eDOCr
 
@@ -26,7 +43,7 @@ Open Anaconda Prompt and type the following commands:
 
 
 ```bash
-conda create -n edocr -ypip
+conda create -n edocr -y
 conda activate edocr
 
 # To install from PyPi
@@ -38,6 +55,7 @@ cd path/to/your/folder
 git clone https://github.com/javvi51/eDOCr
 cd eDOCr
 pip install -r requirements.txt
+pip install .
 ```
 
 ### Using 
@@ -56,7 +74,7 @@ python PATH/TO/YOUR/FOLDER/eDOCr/ocr_it.py PATH/TO/YOUR/DRAWING/my_drawing.pdf
 Additional commands you can use are:
 
 ```bash
-# Specify the destination path. By default, it is the same as your drawing.
+# Specify the destination path. By default, it is the path you are running your code from.
 --dest-folder PATH/TO/YOUR/DESTINATION/FOLDER
 # Does the drawing have watermark you want to remove? By default, it is not considered.
 --water
