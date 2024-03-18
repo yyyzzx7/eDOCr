@@ -6,13 +6,13 @@ eDOCr is a packaged version of [keras-ocr](https://github.com/faustomorales/kera
 
 ### Installation
 
-`eDOCr` supports Python >= 3.6 and TensorFlow >= 2.0.0.
+`eDOCr` supports Python >= 3.6 and TensorFlow >= 2.0.0. The test environment I used is Python = 3.9 and Tensorflow = 2.10.1.
 Install your prefered distribution platform, [Anaconda](https://www.anaconda.com/products/distribution) is recommended.
 Open Anaconda Prompt and type the following commands:
 
 
 ```bash
-conda create -n edocr -y
+conda create -n edocr python=3.9 -y 
 conda activate edocr
 
 # To install from PyPi
