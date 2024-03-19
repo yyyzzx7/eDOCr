@@ -1,6 +1,6 @@
 # eDOCr
 
-eDOCr is a packaged version of [keras-ocr](https://github.com/faustomorales/keras-ocr) that facilitates end-to-end digitization of mechanical EDs. Developed for Windows OS and using Python as the primary programming language.
+eDOCr is a packaged version of [keras-ocr](https://github.com/faustomorales/keras-ocr) that facilitates end-to-end digitization of mechanical EDs. Developed for Windows OS and using Python as the primary programming language. The implementation is discussed in the researh paper [Optical character recognition on engineering drawings to achieve automation in production quality control](https://www.frontiersin.org/articles/10.3389/fmtec.2023.1154132/full) 
 
 ## Getting Started
 
@@ -144,3 +144,4 @@ pretrained_model = None
 train_recognizer.generate_n_train(alphabet, backgrounds, fonts, recognizer_basepath=recognizer_basepath, pretrained_model=pretrained_model)
 ```
 
+This work was supported by Vinnova (Sweden) under grant 2021-02481, iPROD project. The authors would like to thank Vinnova for making this research project possible.
