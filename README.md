@@ -39,6 +39,8 @@ python eDOCr/ocr_it.py drawing.pdf
 
 More customization is possible using your own python file, such as selecting a different model, alphabet or changing colors.
 
+**demo.py**:
+
 ```bash
 # Importing packages
 import os
