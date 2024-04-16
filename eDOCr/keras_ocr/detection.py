@@ -55,9 +55,9 @@ def invert_input(X):
 def get_gaussian_heatmap(size=512, distanceRatio=3.34):
     v = np.abs(np.linspace(-size / 2, size / 2, num=size))
     x, y = np.meshgrid(v, v)
-    g = np.sqrt(x**2 + y**2)
+    g = np.sqrt(x ** 2 + y ** 2)
     g *= distanceRatio / (size / 2)
-    g = np.exp(-(1 / 2) * (g**2))
+    g = np.exp(-(1 / 2) * (g ** 2))
     g *= 255
     return g.clip(0, 255).astype("uint8")
 
@@ -93,12 +93,12 @@ def make_vgg_block(x, filters, n, prefix, pooling=True):
         name=f"{prefix}.{n}",
     )(x)
     x = keras.layers.BatchNormalization(
-        momentum=0.1, epsilon=1e-5, axis=-1, name=f"{prefix}.{n+1}"
+        momentum=0.1, epsilon=1e-5, axis=-1, name=f"{prefix}.{n + 1}"
     )(x)
-    x = keras.layers.Activation("relu", name=f"{prefix}.{n+2}")(x)
+    x = keras.layers.Activation("relu", name=f"{prefix}.{n + 2}")(x)
     if pooling:
         x = keras.layers.MaxPooling2D(
-            pool_size=(2, 2), padding="valid", strides=(2, 2), name=f"{prefix}.{n+3}"
+            pool_size=(2, 2), padding="valid", strides=(2, 2), name=f"{prefix}.{n + 3}"
         )(x)
     return x
 
@@ -133,26 +133,26 @@ def compute_maps(heatmap, image_height, image_width, lines):
             xc = (x1 + x2 + x3 + x4) / 4
             if orientation == "horizontal":
                 current_link_points = (
-                    np.array(
-                        [
-                            [(xc + (x1 + x2) / 2) / 2, (yc + (y1 + y2) / 2) / 2],
-                            [(xc + (x3 + x4) / 2) / 2, (yc + (y3 + y4) / 2) / 2],
-                        ]
-                    )
-                    / 2
+                        np.array(
+                            [
+                                [(xc + (x1 + x2) / 2) / 2, (yc + (y1 + y2) / 2) / 2],
+                                [(xc + (x3 + x4) / 2) / 2, (yc + (y3 + y4) / 2) / 2],
+                            ]
+                        )
+                        / 2
                 )
             else:
                 current_link_points = (
-                    np.array(
-                        [
-                            [(xc + (x1 + x4) / 2) / 2, (yc + (y1 + y4) / 2) / 2],
-                            [(xc + (x2 + x3) / 2) / 2, (yc + (y2 + y3) / 2) / 2],
-                        ]
-                    )
-                    / 2
+                        np.array(
+                            [
+                                [(xc + (x1 + x4) / 2) / 2, (yc + (y1 + y4) / 2) / 2],
+                                [(xc + (x2 + x3) / 2) / 2, (yc + (y2 + y3) / 2) / 2],
+                            ]
+                        )
+                        / 2
                 )
             character_points = (
-                np.array([[x1, y1], [x2, y2], [x3, y3], [x4, y4]]).astype("float32") / 2
+                    np.array([[x1, y1], [x2, y2], [x3, y3], [x4, y4]]).astype("float32") / 2
             )
             # pylint: disable=unsubscriptable-object
             if previous_link_points is not None:
@@ -191,25 +191,25 @@ def compute_maps(heatmap, image_height, image_width, lines):
             # pylint: enable=unsubscriptable-object
             previous_link_points = current_link_points
     return (
-        np.concatenate(
-            [textmap[..., np.newaxis], linkmap[..., np.newaxis]], axis=2
-        ).clip(0, 255)
-        / 255
+            np.concatenate(
+                [textmap[..., np.newaxis], linkmap[..., np.newaxis]], axis=2
+            ).clip(0, 255)
+            / 255
     )
 
 
 def map_to_rgb(y):
     return (
-        np.concatenate([y, np.zeros((y.shape[0], y.shape[1], 1))], axis=-1) * 255
+            np.concatenate([y, np.zeros((y.shape[0], y.shape[1], 1))], axis=-1) * 255
     ).astype("uint8")
 
 
 def getBoxes(
-    y_pred,
-    detection_threshold=0.7,
-    text_threshold=0.4,
-    link_threshold=0.4,
-    size_threshold=10,
+        y_pred,
+        detection_threshold=0.7,
+        text_threshold=0.4,
+        link_threshold=0.4,
+        size_threshold=10,
 ):
     box_groups = []
     for y_pred_cur in y_pred:
@@ -416,7 +416,7 @@ def build_keras_model(weights_path: str = None, backbone_name="vgg"):
             model.load_weights(weights_path)
         elif weights_path.endswith(".pth"):
             assert (
-                backbone_name == "vgg"
+                    backbone_name == "vgg"
             ), "PyTorch weights only allowed with VGG backbone."
             load_torch_weights(model=model, weights_path=weights_path)
         else:
@@ -670,17 +670,17 @@ class Detector:
     """
 
     def __init__(
-        self,
-        weights="clovaai_general",
-        load_from_torch=False,
-        optimizer="adam",
-        backbone_name="vgg",
+            self,
+            weights="clovaai_general",
+            load_from_torch=False,
+            optimizer="adam",
+            backbone_name="vgg",
     ):
         if weights is not None:
             pretrained_key = (weights, load_from_torch)
             assert backbone_name == "vgg", "Pretrained weights available only for VGG."
             assert (
-                pretrained_key in PRETRAINED_WEIGHTS
+                    pretrained_key in PRETRAINED_WEIGHTS
             ), "Selected weights configuration not found."
             weights_config = PRETRAINED_WEIGHTS[pretrained_key]
             weights_path = tools.download_and_verify(
@@ -696,11 +696,11 @@ class Detector:
         self.model.compile(loss="mse", optimizer=optimizer)
 
     def get_batch_generator(
-        self,
-        image_generator,
-        batch_size=8,
-        heatmap_size=512,
-        heatmap_distance_ratio=1.5,
+            self,
+            image_generator,
+            batch_size=8,
+            heatmap_size=512,
+            heatmap_distance_ratio=1.5,
     ):
         """Get a generator of X, y batches to train the detector.
 
@@ -743,13 +743,13 @@ class Detector:
                 yield X, y
 
     def detect(
-        self,
-        images: typing.List[typing.Union[np.ndarray, str]],
-        detection_threshold=0.7,
-        text_threshold=0.4,
-        link_threshold=0.4,
-        size_threshold=10,
-        **kwargs,
+            self,
+            images: typing.List[typing.Union[np.ndarray, str]],
+            detection_threshold=0.7,
+            text_threshold=0.4,
+            link_threshold=0.4,
+            size_threshold=10,
+            **kwargs,
     ):
         """Recognize the text in a set of images.
 

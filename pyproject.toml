@@ -26,3 +26,6 @@ dependencies = {file = ["requirements.txt"]}
 
 [tool.setuptools]
 include-package-data = false
+
+[tool.setuptools.packages.find]
+exclude = ["tests", "Results", "drawing*"]

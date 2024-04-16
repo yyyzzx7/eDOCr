@@ -185,16 +185,16 @@ def CTCDecoder():
 
 
 def build_model(
-    alphabet,
-    height,
-    width,
-    color,
-    filters,
-    rnn_units,
-    dropout,
-    rnn_steps_to_discard,
-    pool_size,
-    stn=True,
+        alphabet,
+        height,
+        width,
+        color,
+        filters,
+        rnn_units,
+        dropout,
+        rnn_steps_to_discard,
+        pool_size,
+        stn=True,
 ):
     """Build a Keras CRNN model for character recognition.
 
@@ -242,7 +242,8 @@ def build_model(
     x = keras.layers.BatchNormalization(name="bn_7")(x)
     if stn:
         # pylint: disable=pointless-string-statement
-        """Spatial Transformer Layer
+        """
+        Spatial Transformer Layer
         Implements a spatial transformer layer as described in [1]_.
         Borrowed from [2]_:
         downsample_fator : float
@@ -261,8 +262,8 @@ def build_model(
         .. [3]  https://github.com/EderSantana/seya/blob/keras1/seya/layers/attention.py
         """
         stn_input_output_shape = (
-            width // pool_size**2,
-            height // pool_size**2,
+            width // pool_size ** 2,
+            height // pool_size ** 2,
             filters[6],
         )
         stn_input_layer = keras.layers.Input(shape=stn_input_output_shape)
@@ -279,16 +280,26 @@ def build_model(
             weights=[
                 np.zeros((64, 6), dtype="float32"),
                 np.array([[1, 0, 0], [0, 1, 0]], dtype="float32").flatten(),
-            ],
+            ]
         )(locnet_y)
+
+        # dense_layer = keras.layers.Dense(6, use_bias=False)
+        # weights = [
+        #     np.zeros((64, 6), dtype="float32"),
+        #     np.array([[1, 0, 0], [0, 1, 0]], dtype="float32"),
+        # ]
+        # dense_layer.set_weights(weights)
+        # locnet_y = dense_layer(locnet_y)
+
+
         localization_net = keras.models.Model(inputs=stn_input_layer, outputs=locnet_y)
         x = keras.layers.Lambda(_transform, output_shape=stn_input_output_shape)(
             [x, localization_net(x)]
         )
     x = keras.layers.Reshape(
         target_shape=(
-            width // pool_size**2,
-            (height // pool_size**2) * filters[-1],
+            width // pool_size ** 2,
+            (height // pool_size ** 2) * filters[-1],
         ),
         name="reshape",
     )(x)
@@ -357,7 +368,8 @@ def build_model(
 
 
 class Recognizer:
-    """A text detector using the CRNN architecture.
+    """
+    A text detector using the CRNN architecture.
 
     Args:
         alphabet: The alphabet the model should recognize.
@@ -365,12 +377,12 @@ class Recognizer:
             See `keras_ocr.recognition.build_model` for details.
         weights: The starting weight configuration for the model.
         include_top: Whether to include the final classification layer in the model (set
-            to False to use a custom alphabet).
+            too False to use a custom alphabet).
     """
 
     def __init__(self, alphabet=None, weights="kurapan", build_params=None):
         assert (
-            alphabet or weights
+                alphabet or weights
         ), "At least one of alphabet or weights must be provided."
         if weights is not None:
             build_params = build_params or PRETRAINED_WEIGHTS[weights]["build_params"]
@@ -408,6 +420,7 @@ class Recognizer:
                         sha256=weights_dict["weights"]["notop"]["sha256"],
                     )
                 )
+
     def get_batch_generator(self, image_generator, batch_size=8, lowercase=False):
         """
         Generate batches of training data from an image generator. The generator
@@ -453,8 +466,8 @@ class Recognizer:
                 "See https://github.com/faustomorales/keras-ocr/issues/54"
             )
             label_length = np.array([len(sentence) for sentence in sentences])[
-                :, np.newaxis
-            ]
+                           :, np.newaxis
+                           ]
             labels = np.array(
                 [
                     [self.alphabet.index(c) for c in sentence]
@@ -494,7 +507,7 @@ class Recognizer:
         )
 
     def recognize_from_boxes(
-        self, images, box_groups, **kwargs
+            self, images, box_groups, **kwargs
     ) -> typing.List[typing.List[str]]:
         """Recognize text from images using lists of bounding boxes.
 

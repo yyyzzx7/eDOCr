@@ -18,7 +18,8 @@ from . import tools
 
 
 def _read_born_digital_labels_file(labels_filepath, image_folder):
-    """Read a labels file and return (filepath, label) tuples.
+    """
+    Read a labels file and return (filepath, label) tuples.
 
     Args:
         labels_filepath: Path to labels file
@@ -38,12 +39,12 @@ def _read_born_digital_labels_file(labels_filepath, image_folder):
 
 
 def get_cocotext_recognizer_dataset(
-    split="train",
-    cache_dir=None,
-    limit=None,
-    legible_only=False,
-    english_only=False,
-    return_raw_labels=False,
+        split="train",
+        cache_dir=None,
+        limit=None,
+        legible_only=False,
+        english_only=False,
+        return_raw_labels=False,
 ):
     """Get a list of (filepath, box, word) tuples from the
     COCO-Text dataset.
@@ -91,19 +92,19 @@ def get_cocotext_recognizer_dataset(
     ]
     with concurrent.futures.ThreadPoolExecutor() as executor:
         for future in tqdm.tqdm(
-            concurrent.futures.as_completed(
-                [
-                    executor.submit(
-                        tools.download_and_verify,
-                        url=f"http://images.cocodataset.org/train2014/{filename}",
-                        cache_dir=images_dir,
-                        verbose=False,
-                    )
-                    for filename in selected_filenames
-                ]
-            ),
-            total=len(selected_filenames),
-            desc="Downloading images",
+                concurrent.futures.as_completed(
+                    [
+                        executor.submit(
+                            tools.download_and_verify,
+                            url=f"http://images.cocodataset.org/train2014/{filename}",
+                            cache_dir=images_dir,
+                            verbose=False,
+                        )
+                        for filename in selected_filenames
+                    ]
+                ),
+                total=len(selected_filenames),
+                desc="Downloading images",
         ):
             _ = future.result()
     dataset = []
@@ -146,17 +147,18 @@ def get_born_digital_recognizer_dataset(split="train", cache_dir=None):
     if split in ["train", "traintest"]:
         train_dir = os.path.join(main_dir, "train")
         training_zip_path = tools.download_and_verify(
-            url="https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/Challenge1_Training_Task3_Images_GT.zip",  # pylint: disable=line-too-long
+            url="https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/Challenge1_Training_Task3_Images_GT.zip",
+            # pylint: disable=line-too-long
             filename="Challenge1_Training_Task3_Images_GT.zip",
             cache_dir=main_dir,
             sha256="8ede0639f5a8031d584afd98cee893d1c5275d7f17863afc2cba24b13c932b07",
         )
         if (
-            len(
-                glob.glob(os.path.join(train_dir, "*.png"))
-                + glob.glob(os.path.join(train_dir, "*.txt"))
-            )
-            != 3568
+                len(
+                    glob.glob(os.path.join(train_dir, "*.png"))
+                    + glob.glob(os.path.join(train_dir, "*.txt"))
+                )
+                != 3568
         ):
             with zipfile.ZipFile(training_zip_path) as zfile:
                 zfile.extractall(train_dir)
@@ -204,7 +206,7 @@ def get_icdar_2013_recognizer_dataset(cache_dir=None):
     """
     dataset = []
     for image_path, lines, _ in get_icdar_2013_detector_dataset(
-        cache_dir=cache_dir, skip_illegible=True
+            cache_dir=cache_dir, skip_illegible=True
     ):
         for line in lines:
             box, text = tools.combine_line(line)
@@ -232,7 +234,8 @@ def get_icdar_2013_detector_dataset(cache_dir=None, skip_illegible=False):
     main_dir = os.path.join(cache_dir, "icdar2013")
     training_images_dir = os.path.join(main_dir, "Challenge2_Training_Task12_Images")
     training_zip_images_path = tools.download_and_verify(
-        url="https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/Challenge2_Training_Task12_Images.zip",  # pylint: disable=line-too-long
+        url="https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/Challenge2_Training_Task12_Images.zip",
+        # pylint: disable=line-too-long
         cache_dir=main_dir,
         filename="Challenge2_Training_Task12_Images.zip",
         sha256="7a57d1699fbb92db3ad82c930202938562edaf72e1c422ddd923860d8ace8ded",
@@ -242,7 +245,8 @@ def get_icdar_2013_detector_dataset(cache_dir=None, skip_illegible=False):
             zfile.extractall(training_images_dir)
     training_gt_dir = os.path.join(main_dir, "Challenge2_Training_Task2_GT")
     training_zip_gt_path = tools.download_and_verify(
-        url="https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/Challenge2_Training_Task2_GT.zip",  # pylint: disable=line-too-long
+        url="https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/Challenge2_Training_Task2_GT.zip",
+        # pylint: disable=line-too-long
         cache_dir=main_dir,
         filename="Challenge2_Training_Task2_GT.zip",
         sha256="4cedd5b1e33dc4354058f5967221ac85dbdf91a99b30f3ab1ecdf42786a9d027",
@@ -320,7 +324,8 @@ def get_icdar_2019_semisupervised_dataset(cache_dir=None):
         with zipfile.ZipFile(training_zip_2) as zfile:
             zfile.extractall(main_dir)
     ground_truth = tools.download_and_verify(
-        url="https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/mlt2019_dataset.json",  # pylint: disable=line-too-long
+        url="https://github.com/faustomorales/keras-ocr/releases/download/v0.8.4/mlt2019_dataset.json",
+        # pylint: disable=line-too-long
         cache_dir=main_dir,
         filename="mlt2019_dataset.json",
     )
@@ -348,14 +353,14 @@ def get_icdar_2019_semisupervised_dataset(cache_dir=None):
 
 
 def get_detector_image_generator(
-    labels,
-    width,
-    height,
-    augmenter=None,
-    area_threshold=0.5,
-    focused=False,
-    min_area=None,
-    shuffle=True,
+        labels,
+        width,
+        height,
+        augmenter=None,
+        area_threshold=0.5,
+        focused=False,
+        min_area=None,
+        shuffle=True,
 ):
     """Generated augmented (image, lines) tuples from a list
     of (filepath, lines, confidence) tuples. Confidence is
@@ -422,7 +427,7 @@ def get_detector_image_generator(
 
 
 def get_recognizer_image_generator(
-    labels, height, width, alphabet, augmenter=None, shuffle=True
+        labels, height, width, alphabet, augmenter=None, shuffle=True
 ):
     """Generate augmented (image, text) tuples from a list
     of (filepath, box, label) tuples.

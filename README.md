@@ -37,7 +37,7 @@ We need to locate the ocr_it.py file in our system. If you have installed using 
 
 ```bash
 python PATH/TO/YOUR/FOLDER/eDOCr/ocr_it.py PATH/TO/YOUR/DRAWING/my_drawing.pdf
-
+python eDOCr/ocr_it.py drawing.pdf
 ```
 
 Additional commands you can use are:

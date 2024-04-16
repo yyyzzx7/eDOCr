@@ -1,5 +1,5 @@
 opencv-python
-tensorflow>=2.0.0
+tensorflow==2.13
 Pillow
 shapely
 anytree
@@ -12,6 +12,6 @@ imgaug
 fonttools
 editdistance
 pyclipper
-efficientnet == 1.0.0
+efficientnet==1.0.0
 pytest
 pdf2image

@@ -2,6 +2,9 @@ LICENSE
 README.md
 pyproject.toml
 requirements.txt
+docs/conf.py
+docs/stubs/tensorflow/__init__.py
+docs/stubs/tensorflow/keras.py
 eDOCr/ocr_it.py
 eDOCr.egg-info/PKG-INFO
 eDOCr.egg-info/SOURCES.txt

@@ -1,1 +1,4 @@
+build
+docs
 eDOCr
+tests
